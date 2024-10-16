@@ -2,6 +2,7 @@ import { Controller, Get, Post, Delete, Route, Path, Body, Tags, Patch } from "t
 import { consoleService } from "../services/console.service";
 import { ConsoleDTO } from "../dto/console.dto";
 import { notFound } from "../error/NotFoundError";
+import { Game } from "../models/game.model";
 
 @Route("consoles")
 @Tags("Consoles")
@@ -20,7 +21,18 @@ export class ConsoleController extends Controller {
       notFound(""+id)
     return console;
   }
-
+    // Récupère des juex par ID de la console
+  @Get("{id}")
+  public async getGamesByConsoleById(@Path() id: number): Promise<{ console: ConsoleDTO, games: Game[] } | null> {
+    const result = await consoleService.getGamesByConsoleById(id);
+    if (!result) {
+      return null;  
+    }
+    return {
+      console: result.console,
+      games: result.games,    
+    };
+  }
   // Crée une nouvelle console
   @Post("/")
   public async createConsole(
